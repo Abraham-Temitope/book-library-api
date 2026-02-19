@@ -2,9 +2,12 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
-from . import crud, models, schemas, database, auth
-
+from app import models, schemas, crud, database, auth
 app = FastAPI()  # Create app instance
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Book Library API!"}
+
 models.Base.metadata.create_all(bind=database.engine)  # Create tables
 
 @app.post("/users/", response_model=schemas.User)  # Create user endpoint
