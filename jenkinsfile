@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_USERNAME = 'abrahamsiyanbola'
+        IMAGE_NAME = 'book-library-api'
+        DOCKERHUB_CREDENTIALS = 'my dockerhub credentials'
+        FULL_IMAGE_NAME = "${DOCKER_USERNAME}/${IMAGE_NAME}"
+    }
+    stages {
+        stage ("Git checkout") {
+            steps {
+                git branch: 'main', url: 'https://github.com/Abraham-Temitope/book-library-api'
+            }
+        
+        }
+
+        stage ("install dependencies & testing") {
+            steps {
+                sh 'python3 -m venv venv'
+                sh 'source .venv/bin/activate'
+                sh 'pip install --upgrade pip'
+                sh 'pip install -r requirements.txt'
+                sh 'pytest || exit 1'
+            }
+        }
+
+       stage ("docker build") {
+            steps {
+                sh 'docker build -t ${IMAGE_NAME} .'
+            }
+       }
+       stage ("docker push") {
+            steps {
+                sh 'docker build -t ${FULL_IMAGE_NAME}:${BUILD_NUMBER} .'
+                sh 'docker tag ${FULL_IMAGE_NAME}:${BUILD_NUMBER} ${FULL_IMAGE_NAME}:latest'
+                withCredentials([usernamePassword(
+                credentialsId: "${DOCKERHUB_CREDENTIALS}",
+                usernameVariable: 'DOCKERHUB_USERNAME', 
+                passwordVariable: 'DOCKERHUB_PASSWORD')])
+                {
+                sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
+            }
+                sh 'docker push ${FULL_IMAGE_NAME}:${BUILD_NUMBER}'
+                sh 'docker push ${FULL_IMAGE_NAME}:latest'
+            }
+       } 
+    }
+}
+post {
+        always { echo 'Pipeline finished' }
+        success { echo '✅ Success!' }
+        failure { echo '❌ Failed - check output' }
+    }
