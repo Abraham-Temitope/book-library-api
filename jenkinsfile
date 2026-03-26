@@ -17,9 +17,10 @@ pipeline {
         stage ("install dependencies & testing") {
             steps {
                 sh 'python3 -m venv venv'
-                sh 'source .venv/bin/activate'
+                sh 'source venv/bin/activate'
                 sh 'pip install --upgrade pip'
-                sh 'pip install -r requirements.txt'
+                sh 'pip install -r requirements.txt' // this is fot  production dependencies
+                sh 'pip install -r requirements-dev.txt  || true ' // this is for test.  true || i.e dont fail if file missing yet
                 sh 'pytest || exit 1'
             }
         }
@@ -39,7 +40,7 @@ pipeline {
                 passwordVariable: 'DOCKERHUB_PASSWORD')])
                 {
                 sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
-            }
+            d}
                 sh 'docker push ${FULL_IMAGE_NAME}:${BUILD_NUMBER}'
                 sh 'docker push ${FULL_IMAGE_NAME}:latest'
             }
