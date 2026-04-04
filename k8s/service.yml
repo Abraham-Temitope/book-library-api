@@ -8,6 +8,7 @@ spec:
   selector:
     app: book-library
   ports:
-    - port: 8000
+    - name: http # ← Add this name
+      port: 8000
       targetPort: 8000
       protocol: TCP
