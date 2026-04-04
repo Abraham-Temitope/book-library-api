@@ -22,6 +22,11 @@ app = FastAPI(lifespan=lifespan)
 def read_root():
     return {"message": "Welcome to the Book Library API!"}
 
+@app.get("/health")
+def health_check():
+    """Simple health check endpoint to verify the API is running"""
+    return {"status": "healthy", "message": "API is up and running!"}
+
 @app.get("/users/me", response_model=schemas.User)
 def read_users_me(current_user: schemas.User = Depends(auth.get_current_user)):
     return current_user
