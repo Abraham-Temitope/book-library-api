@@ -24,8 +24,8 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    """Simple health check endpoint to verify the API is running"""
-    return {"status": "healthy", "message": "API is up and running!"}
+    """Lightweight health check for ALB"""
+    return {"status": "healthy"}
 
 @app.get("/users/me", response_model=schemas.User)
 def read_users_me(current_user: schemas.User = Depends(auth.get_current_user)):
