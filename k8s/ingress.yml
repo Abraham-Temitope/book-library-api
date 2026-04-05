@@ -6,9 +6,10 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/healthcheck-path: / # Health check path for the ALB
-    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "30" # Health check interval for the ALB
-    alb.ingress.kubernetes.io/success-codes: "200,404" # Success codes for the ALB
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "30"
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "10"
+    alb.ingress.kubernetes.io/success-codes: "200,404"
 spec:
   ingressClassName: alb
   rules:
