@@ -23,8 +23,9 @@ def read_root():
     return {"message": "Welcome to the Book Library API!"}
 
 @app.get("/health")
+@app.head("/health")
 def health_check():
-    """Lightweight health check for ALB"""
+    """Lightweight health check for ALB (supports GET and HEAD)"""
     return {"status": "healthy"}
 
 @app.get("/users/me", response_model=schemas.User)
